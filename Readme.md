@@ -62,7 +62,21 @@ This solver uses high-order spectral elements with Gauss-Legendre quadrature for
 
 3. The solution and error metrics will be computed and displayed.
 
-## Example Results
+## Known issues
+- The degree of freedom (DOF) generation process in `ID.jl` and `ChkNodeEx.jl` currently uses a naive approach that:
+  1. Assigns DOFs sequentially to all nodes
+  2. Uses `ChkNodeEx.jl` to check for existing nodes through direct array comparisons
+  3. Then searches for and eliminates duplicate DOFs using nested loops
+  This becomes a significant bottleneck for large meshes or high polynomial orders.
+
+- The DOF assignment and node checking could be optimized by:
+  - Using more efficient data structures (e.g., hash sets) to track unique DOFs and nodes
+  - Implementing a smarter initial assignment that avoids duplicates
+  - Replacing the direct array comparisons in `ChkNodeEx.jl` with spatial partitioning
+  - Parallelizing the duplicate detection process
+  
+This node/DOF handling is currently the main performance bottleneck when scaling to larger problems or higher orders.
+
 
 
 
